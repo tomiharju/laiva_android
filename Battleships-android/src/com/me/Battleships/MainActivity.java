@@ -17,10 +17,11 @@ public class MainActivity extends AndroidApplication implements NativeFunctions{
       
         //Open socket here
         //Connect to server
-        //
-        startGame();
+        
+       
         
         //After everything is finished, startGame()
+        startGame();
     }
 
 	@Override
