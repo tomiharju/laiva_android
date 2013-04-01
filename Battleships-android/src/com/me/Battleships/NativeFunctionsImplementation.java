@@ -80,12 +80,34 @@ public class NativeFunctionsImplementation implements NativeFunctions, SocketIOC
 				turn.y = json.getInt("y");
 				turn.weapon = json.getInt("weapon");
 				
+				Log.d("battleships", "got hit on " + turn.x + " " + turn.y + " by " + turn.weapon);
+				
 				logicHandler.receiveTurn(turn);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if(event.equals("result")) {
+
+			int len = arguments.length();
+			JSONArray subArray;
+
+			float[][] hits = new float[len][2];
+			try {
+				for(int i = 0; i < len; i++) {
+					subArray = arguments.getJSONArray(i);
+					hits[i][0] = (float) subArray.getDouble(0);
+					hits[i][1] = (float) subArray.getDouble(1);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
+			Turn t = new Turn(Turn.TURN_RESULT);
+			t.hits = hits;
+			
+			logicHandler.receiveTurn(t);
 		}
 	}
 
@@ -146,7 +168,7 @@ public class NativeFunctionsImplementation implements NativeFunctions, SocketIOC
 				json.put("weapon", t.weapon);
 				
 				jsonArray.put(json);
-				client.emit("turn", jsonArray);
+				client.emit("shoot", jsonArray);
 				
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -155,6 +177,23 @@ public class NativeFunctionsImplementation implements NativeFunctions, SocketIOC
 
 			break;
 		case Turn.TURN_RESULT:
+			float[][] hits = t.hits;
+			try {
+				JSONArray array = new JSONArray();
+				JSONArray subArray;
+
+				for(float[] hit : hits) {
+					subArray = new JSONArray();
+
+					subArray.put(hit[0]);
+					subArray.put(hit[1]);
+					array.put(subArray);
+				}
+				client.emit("result", array);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		}
 	}
