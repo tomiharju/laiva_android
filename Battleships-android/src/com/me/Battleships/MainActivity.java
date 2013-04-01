@@ -15,7 +15,9 @@ public class MainActivity extends AndroidApplication{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        nativeFunctions = new NativeFunctionsImplementation();
+        WebSocketHandler handler = new WebSocketHandler();
+
+        nativeFunctions = new NativeFunctionsImplementation(handler);
         startGame();
     }
 
