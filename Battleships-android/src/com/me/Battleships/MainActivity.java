@@ -2,8 +2,6 @@ package com.me.Battleships;
 
 import Core.Main;
 import Core.NativeFunctions;
-import GameLogic.GameLogicHandler;
-import GameLogic.Turn;
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -11,14 +9,13 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 public class MainActivity extends AndroidApplication{
 	
-	private Dispatcher dispatcher;
+	private NativeFunctions nativeFunctions;
 	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dispatcher = new Dispatcher();
-        dispatcher.start();
+        nativeFunctions = new NativeFunctionsImplementation();
         startGame();
     }
 
@@ -31,7 +28,7 @@ public class MainActivity extends AndroidApplication{
         cfg.useAccelerometer = false;
         cfg.useWakelock=true;
      
-        initialize(new Main(dispatcher), cfg);
+        initialize(new Main(nativeFunctions), cfg);
 	}
 
 
