@@ -19,7 +19,7 @@ public class NativeFunctionsImplementation implements NativeFunctions, SocketIOC
 	
 	public NativeFunctionsImplementation() {
 			//if(client == null) {
-				client = new SocketIOClient(URI.create("http://198.211.119.249:8080"), this);
+				client = new SocketIOClient(URI.create("http://198.211.119.249"), this);
 				client.connect();
 				Log.d("battleships", "connected");
 			//}
@@ -63,9 +63,29 @@ public class NativeFunctionsImplementation implements NativeFunctions, SocketIOC
 
 	@Override
 	public void on(String event, JSONArray arguments) {
-		if(event.equals("ready")) {
-			// GameLogicHandler.start();
-			// GameLogicHandler.wait();
+		if(event.equals("start")) {
+			Log.d("battleships", "received start");
+			logicHandler.receiveTurn(new Turn(Turn.TURN_START));
+		} else if(event.equals("wait")) {
+			Log.d("battleships", "received wait");
+
+			logicHandler.receiveTurn(new Turn(Turn.TURN_WAIT));
+		} else if(event.equals("shoot")) {
+			Log.d("battleships", "received shoot");
+
+			try {
+				JSONObject json = arguments.getJSONObject(0);
+				Turn turn = new Turn(Turn.TURN_SHOOT);
+				turn.x = json.getInt("x");
+				turn.y = json.getInt("y");
+				turn.weapon = json.getInt("weapon");
+				
+				logicHandler.receiveTurn(turn);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
