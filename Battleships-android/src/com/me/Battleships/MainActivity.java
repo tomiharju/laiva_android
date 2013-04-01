@@ -2,33 +2,27 @@ package com.me.Battleships;
 
 import Core.Main;
 import Core.NativeFunctions;
+import GameLogic.GameLogicHandler;
+import GameLogic.Turn;
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
-public class MainActivity extends AndroidApplication implements NativeFunctions{
+public class MainActivity extends AndroidApplication{
 	
+	private Dispatcher dispatcher;
 	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      
-        //Open socket here
-        //Connect to server
-        
-       
-        
-        //After everything is finished, startGame()
+        dispatcher = new Dispatcher();
+        dispatcher.start();
         startGame();
     }
 
-	@Override
-	public void helloworld() {
-		//Android specific function calls
-		
-	}
+	
 	
 	public void startGame(){
 		AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
@@ -36,8 +30,12 @@ public class MainActivity extends AndroidApplication implements NativeFunctions{
         cfg.useCompass =false;
         cfg.useAccelerometer = false;
         cfg.useWakelock=true;
-        initialize(new Main(this), cfg);
+     
+        initialize(new Main(dispatcher), cfg);
 	}
+
+
+	
 	
 	
 }
