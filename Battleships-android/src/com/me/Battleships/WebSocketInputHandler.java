@@ -1,14 +1,18 @@
 package com.me.Battleships;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import GameLogic.GameLogicHandler;
-import GameLogic.Turn;
+import Utilities.Turn;
 import android.util.Log;
 
+import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
+
 
 public class WebSocketInputHandler implements SocketIOClient.Handler {
 	
@@ -58,22 +62,23 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			int len = arguments.length();
 			JSONArray subArray;
 
-			float[][] hits = new float[len][2];
+			ArrayList<Vector2> hits = new ArrayList<Vector2>();
 			try {
 				for(int i = 0; i < len; i++) {
 					subArray = arguments.getJSONArray(i);
-					hits[i][0] = (float) subArray.getDouble(0);
-					hits[i][1] = (float) subArray.getDouble(1);
+					Vector2 vector = new Vector2();
+					vector.x = (float) subArray.getDouble(0);
+					vector.y = (float) subArray.getDouble(1);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			Turn t = new Turn(Turn.TURN_RESULT);
-			t.hits = hits;
+			Turn turn = new Turn(Turn.TURN_RESULT);
+			turn.hits = hits;
 			
-			logicHandler.receiveTurn(t);
+			logicHandler.receiveTurn(turn);
 		}
 	}
 

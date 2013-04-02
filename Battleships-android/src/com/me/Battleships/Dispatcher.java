@@ -1,10 +1,10 @@
 package com.me.Battleships;
 
-import Core.NativeFunctions;
 import GameLogic.GameLogicHandler;
-import GameLogic.Turn;
+import Utilities.Turn;
 
-public class Dispatcher extends Thread implements NativeFunctions{
+
+public class Dispatcher extends Thread {
 	private GameLogicHandler handler;
 	private boolean messageWaiting;
 	private Turn turn;
@@ -12,6 +12,7 @@ public class Dispatcher extends Thread implements NativeFunctions{
 		messageWaiting=false;
 	}
 	
+	@Override
 	public void run(){
 		while(true){
 			try {
@@ -45,7 +46,7 @@ public class Dispatcher extends Thread implements NativeFunctions{
 		
 	}
 	}
-	@Override
+
 	public void sendTurn(Turn t) {
 		//Server.sendmessage;
 		
@@ -74,7 +75,7 @@ public class Dispatcher extends Thread implements NativeFunctions{
 	}
 	
 	
-	@Override
+
 	public void setLogicHandler(GameLogicHandler h) {
 		this.handler=h;
 		

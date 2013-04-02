@@ -2,15 +2,17 @@ package com.me.Battleships;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import Core.NativeFunctions;
-import GameLogic.Turn;
+import Utilities.Turn;
 import android.util.Log;
 
+import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 
 public class WebSocketHandler implements NativeFunctions {
@@ -74,15 +76,15 @@ public class WebSocketHandler implements NativeFunctions {
 
 	@Override
 	public void sendResult(Turn t) {
-		float[][] hits = t.hits;
+		ArrayList<Vector2> hits = t.hits;
 		try {
 			JSONArray array = new JSONArray();
 
-			for(float[] hit : hits) {
+			for(Vector2	hit : hits) {
 				JSONArray subArray = new JSONArray();
 
-				subArray.put(hit[0]);
-				subArray.put(hit[1]);
+				subArray.put(hit.x);
+				subArray.put(hit.y);
 				array.put(subArray);
 			}
 			client.emit("result", array);
