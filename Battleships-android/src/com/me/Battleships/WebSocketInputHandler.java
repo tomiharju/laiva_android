@@ -45,8 +45,8 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			try {
 				JSONObject json = arguments.getJSONObject(0);
 				Turn turn = new Turn(Turn.TURN_SHOOT);
-				turn.x = json.getInt("x");
-				turn.y = json.getInt("y");
+				turn.x = (float) json.getDouble("x");
+				turn.y = (float) json.getDouble("y");
 				turn.weapon = json.getInt("weapon");
 				
 				Log.d("battleships", "got hit on " + turn.x + " " + turn.y + " by " + turn.weapon);
