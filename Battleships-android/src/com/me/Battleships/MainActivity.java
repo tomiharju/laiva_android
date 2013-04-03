@@ -36,7 +36,7 @@ public class MainActivity extends AndroidApplication{
 	protected void onDestroy() {
 		super.onDestroy();
 		
-		socketOutputHandler.disconnect();
+		//socketOutputHandler.disconnect();
 	}
 
 	@Override

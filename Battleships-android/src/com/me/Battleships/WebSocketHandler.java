@@ -87,7 +87,7 @@ public class WebSocketHandler implements NativeFunctions {
 				subArray.put(hit.y);
 				array.put(subArray);
 			}
-			client.emit("result", array);
+			client.emit("result", new JSONArray().put(array));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
