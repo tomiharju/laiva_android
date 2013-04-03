@@ -61,14 +61,23 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 
 			int len = arguments.length();
 			JSONArray subArray;
+			
+			Log.d("battleships", "Receiving result with " + len + " hits.");
 
 			ArrayList<Vector2> hits = new ArrayList<Vector2>();
 			try {
 				for(int i = 0; i < len; i++) {
+					if(arguments.get(i) == null) {
+						break;
+					}
+					
 					subArray = arguments.getJSONArray(i);
 					Vector2 vector = new Vector2();
 					vector.x = (float) subArray.getDouble(0);
 					vector.y = (float) subArray.getDouble(1);
+					
+					Log.d("battleships", vector.toString());
+					hits.add(vector);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
