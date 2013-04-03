@@ -58,16 +58,20 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			}
 			
 		} else if(event.equals("result")) {
-
-			int len = arguments.length();
-			JSONArray subArray;
-			
-			Log.d("battleships", "Receiving result with " + len + " hits.");
-
 			ArrayList<Vector2> hits = new ArrayList<Vector2>();
+
 			try {
+				arguments = arguments.getJSONArray(0);
+
+				int len = arguments.length();
+				JSONArray subArray;
+						
+				Log.d("battleships", "Receiving result with " + len + " hits.");
+
+				
 				for(int i = 0; i < len; i++) {
 					if(arguments.get(i) == null) {
+						Log.d("battleships", "index is null. breaking");
 						break;
 					}
 					
