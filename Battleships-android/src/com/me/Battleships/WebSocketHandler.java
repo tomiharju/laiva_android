@@ -36,6 +36,7 @@ public class WebSocketHandler implements NativeFunctions {
 	
 	@Override
 	public void disconnect() {
+		Log.d("battleships", "Disconnecting");
 		try {
 			client.disconnect();
 		} catch (IOException e) {
@@ -110,6 +111,15 @@ public class WebSocketHandler implements NativeFunctions {
 			json.put("room", room);
 
 			client.emit("join", new JSONArray().put(json));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void leave() {
+		try {
+			client.emit("leave", null);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

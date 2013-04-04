@@ -2,6 +2,7 @@ package com.me.Battleships;
 
 import Core.Main;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -32,7 +33,8 @@ public class MainActivity extends AndroidApplication {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		socketHandler.disconnect();
+		Log.d("battleships", "ondestroy");
+		socketHandler.leave();
 	}
 	
 	
