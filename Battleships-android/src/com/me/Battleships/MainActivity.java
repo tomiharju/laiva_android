@@ -6,19 +6,16 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
-public class MainActivity extends AndroidApplication{
+public class MainActivity extends AndroidApplication {
 	
-	private WebSocketHandler socketOutputHandler;
+	private WebSocketHandler socketHandler;
 		
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // TODO Lobby
-        
-        WebSocketInputHandler socketInputHandler = new WebSocketInputHandler();
-
-        socketOutputHandler = new WebSocketHandler(socketInputHandler);
+        socketHandler = LobbyActivity.socketOutputHandler;
+       
         startGame();
     }
 	
@@ -29,26 +26,13 @@ public class MainActivity extends AndroidApplication{
         cfg.useAccelerometer = false;
         cfg.useWakelock=true;
      
-        initialize(new Main(socketOutputHandler), cfg);
+        initialize(new Main(socketHandler), cfg);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
-		//socketOutputHandler.disconnect();
-	}
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
+		socketHandler.disconnect();
 	}
 	
 	

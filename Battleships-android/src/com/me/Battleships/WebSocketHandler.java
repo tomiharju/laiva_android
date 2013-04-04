@@ -30,8 +30,7 @@ public class WebSocketHandler implements NativeFunctions {
 	
 	@Override
 	public void connect() {
-		client = new SocketIOClient(URI.create("http://198.211.119.249:8080"), socketHandler);
-
+		client = new SocketIOClient(URI.create("http://198.211.119.249:8081"), socketHandler);
 		client.connect();
 	}
 	
@@ -89,6 +88,30 @@ public class WebSocketHandler implements NativeFunctions {
 			}
 			client.emit("result", new JSONArray().put(array));
 		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void matchMake() {
+		try {
+			client.emit("matchmake", null);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void join(CharSequence room) {
+		JSONObject json = new JSONObject();
+		
+		try {
+			client.emit("matchMake", null);
+			
+			json.put("room", room);
+
+			client.emit("join", new JSONArray().put(json));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

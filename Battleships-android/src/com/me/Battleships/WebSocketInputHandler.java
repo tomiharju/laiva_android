@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import GameLogic.GameLogicHandler;
 import Utilities.Turn;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -17,6 +19,11 @@ import com.codebutler.android_websockets.SocketIOClient;
 public class WebSocketInputHandler implements SocketIOClient.Handler {
 	
 	private GameLogicHandler logicHandler;
+	private final Context ctx;
+	
+	public WebSocketInputHandler(Context ctx) {
+		this.ctx = ctx;
+	}
 	
 	public void setGameLogicHandler(GameLogicHandler logicHandler) {
 		this.logicHandler = logicHandler;
@@ -92,6 +99,10 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			turn.hits = hits;
 			
 			logicHandler.receiveTurn(turn);
+		} else if(event.equals("launch")) {
+			Log.d("battleships", "Launching");
+			Intent intent = new Intent(ctx, MainActivity.class);
+			ctx.startActivity(intent);
 		}
 	}
 
