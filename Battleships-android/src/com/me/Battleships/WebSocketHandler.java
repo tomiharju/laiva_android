@@ -30,7 +30,7 @@ public class WebSocketHandler implements NativeFunctions {
 	
 	@Override
 	public void connect() {
-		client = new SocketIOClient(URI.create("http://198.211.119.249"), socketHandler);
+		client = new SocketIOClient(URI.create("http://198.211.119.249:8080"), socketHandler);
 
 		client.connect();
 	}
