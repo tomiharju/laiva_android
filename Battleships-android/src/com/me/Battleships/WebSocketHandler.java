@@ -8,14 +8,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Core.NativeFunctions;
+import Core.ConnectionHandler;
 import Utilities.Turn;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 
-public class WebSocketHandler implements NativeFunctions {
+public class WebSocketHandler implements ConnectionHandler {
 	private static SocketIOClient client;
 	private final WebSocketInputHandler socketHandler;
 	
@@ -125,5 +125,7 @@ public class WebSocketHandler implements NativeFunctions {
 			e.printStackTrace();
 		}
 	}
+
+
 
 }
