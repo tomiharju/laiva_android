@@ -6,22 +6,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import Core.NativeActions;
 import GameLogic.GameLogicHandler;
 import Utilities.Turn;
-import android.content.Intent;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 
 
-public class WebSocketInputHandler implements SocketIOClient.Handler {
+public class SocketIOListener implements SocketIOClient.Handler {
+	private final NativeActions nativeActions;
 	
 	private GameLogicHandler logicHandler;
-	private final LobbyActivity ctx;
 	
-	public WebSocketInputHandler(LobbyActivity ctx) {
-		this.ctx = ctx;
+	public SocketIOListener(NativeActions nativeActions) {
+		this.nativeActions = nativeActions;
 	}
 	
 	public void setGameLogicHandler(GameLogicHandler logicHandler) {
@@ -43,6 +43,7 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			
 		} else if(event.equals("wait")) {
 			Log.d("battleships", "received wait");
+			nativeActions.dismissProgressDialog();
 			logicHandler.receiveTurn(new Turn(Turn.TURN_WAIT));
 			
 		} else if(event.equals("shoot")) {
@@ -64,6 +65,8 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			}
 			
 		} else if(event.equals("result")) {
+			// Result after shoot
+			
 			ArrayList<Vector2> hits = new ArrayList<Vector2>();
 
 			try {
@@ -99,16 +102,18 @@ public class WebSocketInputHandler implements SocketIOClient.Handler {
 			
 			logicHandler.receiveTurn(turn);
 		} else if(event.equals("launch")) {
-			ctx.dismissDialog();
+			// Launch game
 			Log.d("battleships", "Launching");
-			Intent intent = new Intent(ctx, MainActivity.class);
-			ctx.startActivity(intent);
+			
+			nativeActions.dismissProgressDialog();
+			nativeActions.launchGameIntent();
 		}
 	}
 
 	@Override
 	public void onDisconnect(int code, String reason) {
 		// TODO Notify logicHandler of disconnection so it can pause game and attempt to reconnect
+		Log.d("battleships", code + " onDisconnect reason: " + reason);
 	}
 
 	@Override
