@@ -17,7 +17,7 @@
             android:layout_marginBottom="175dp" >
 
             <Button
-                android:id="@+id/matchmake"
+                android:id="@+id/matchmakeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -26,10 +26,10 @@
                 android:textSize="30dp" />
 
             <Button
-                android:id="@+id/join"
+                android:id="@+id/joinBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/matchmake"
+                android:layout_below="@+id/matchmakeBtn"
                 android:layout_centerHorizontal="true"
                 android:textSize="30dp"
                 android:text="Join game" />

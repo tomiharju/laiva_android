@@ -15,7 +15,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.me.Battleships.R;
 import com.sohvastudios.battleships.game.core.CancelListener;
 
 public class LobbyActivity extends Activity {
@@ -46,10 +45,10 @@ public class LobbyActivity extends Activity {
     }
 	
 	public void setButtonListeners() {
-		Button matchmake = (Button) findViewById(R.id.matchmake);
-        Button join = (Button) findViewById(R.id.join);
+		Button matchmakeBtn = (Button) findViewById(R.id.matchmakeBtn);
+        Button joinBtn = (Button) findViewById(R.id.joinBtn);
         
-        matchmake.setOnClickListener(new OnClickListener() {
+        matchmakeBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				nativeActions.createProgressDialog("Matchmaking", "Looking for opponent", true, new CancelListener() {
@@ -62,7 +61,7 @@ public class LobbyActivity extends Activity {
 			}
 		});
         
-        join.setOnClickListener(new OnClickListener() {
+        joinBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				final EditText input = new EditText(LobbyActivity.this);
@@ -116,9 +115,8 @@ public class LobbyActivity extends Activity {
 			Log.d("battleships", "Pressed disconnect");
 			socketHandler.disconnect();
 			return true;
-		default:
-			return super.onOptionsItemSelected(item);	
 		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
