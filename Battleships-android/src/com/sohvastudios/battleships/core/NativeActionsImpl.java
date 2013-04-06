@@ -1,5 +1,6 @@
 package com.sohvastudios.battleships.core;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,12 +9,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.sohvastudios.battleships.game.core.CancelListener;
+import com.sohvastudios.battleships.game.core.ConfirmListener;
 import com.sohvastudios.battleships.game.core.NativeActions;
 
 public class NativeActionsImpl implements NativeActions, Parcelable {
 	
 	private ProgressDialog progressDialog;
-	private Context ctx;
+	private static Context ctx;
 	
 	private SocketIOHandler socketHandler;
 	
@@ -22,7 +24,6 @@ public class NativeActionsImpl implements NativeActions, Parcelable {
 		this.ctx = ctx;
 	}
 	
-	@Override
 	public void launchGameIntent() {
 		Intent intent = new Intent(ctx, GameActivity.class);
 		intent.putExtra("NativeActions", this);
@@ -52,6 +53,25 @@ public class NativeActionsImpl implements NativeActions, Parcelable {
 			return;
 		}
 		progressDialog.dismiss();
+	}
+	
+	@Override
+	public void createConfirmDialog(String title, String message, String yes, String no, final ConfirmListener confirmListener) {
+		new AlertDialog.Builder(ctx)
+			.setTitle(title)
+			.setMessage(message)
+			.setPositiveButton(yes, new DialogInterface.OnClickListener() {	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					confirmListener.yes();				}
+			})
+			.setNegativeButton(no, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					confirmListener.no();
+				}
+			})
+			.show();
 	}
 	
 	// Parcelable stuff

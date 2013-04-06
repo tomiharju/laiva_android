@@ -1,13 +1,12 @@
 package com.sohvastudios.battleships.core;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.sohvastudios.battleships.game.core.ConfirmListener;
 import com.sohvastudios.battleships.game.core.Main;
 import com.sohvastudios.battleships.game.core.NativeActions;
 
@@ -21,11 +20,11 @@ public class GameActivity extends AndroidApplication {
         super.onCreate(savedInstanceState);
         Log.d("battleships", "GameActivity launched");
         
-        Intent i = getIntent();
+        Intent intent = getIntent();
         
-        nativeActions = (NativeActions) i.getParcelableExtra("NativeActions");
-        socketHandler = (SocketIOHandler) i.getParcelableExtra("SocketHandler");
-        Log.d("battleships", socketHandler.toString());
+        nativeActions = new NativeActionsImpl(this);
+        //nativeActions = (NativeActions) intent.getParcelableExtra("NativeActions");
+        socketHandler = (SocketIOHandler) intent.getParcelableExtra("SocketHandler");
        
         startGame();
     }
@@ -37,28 +36,27 @@ public class GameActivity extends AndroidApplication {
         cfg.useAccelerometer = false;
         cfg.useWakelock=true;
      
-        initialize(new Main(socketHandler), cfg);
+        initialize(new Main(socketHandler, nativeActions), cfg);
 	}
 
 	@Override
 	public void onBackPressed() {
-		new AlertDialog.Builder(this)
-			.setTitle("Really leave game?")
-			.setMessage("This battle is not over yet. Really give up?")
-			.setPositiveButton("I'm a coward.", new DialogInterface.OnClickListener() {			
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					socketHandler.leave();
-					GameActivity.this.back();
-				}
-			})
-			.setNegativeButton("Back to the batle!.", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Cancel
-				}
-			})
-			.show();
+		nativeActions.createConfirmDialog(
+				"Really leave game?", 
+				"This battle is not over yet. Are you going to give up?", 
+				"I'm a coward",
+				"Return to battle", 
+				new ConfirmListener() {
+					@Override
+					public void yes() {
+						socketHandler.leave();
+						GameActivity.this.back();
+					}
+					@Override
+					public void no() {
+						// Cancel
+					}	
+				});
 	}
 	
 	private void back() {

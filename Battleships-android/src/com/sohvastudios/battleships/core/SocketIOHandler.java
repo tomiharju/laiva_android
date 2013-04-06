@@ -129,6 +129,7 @@ public class SocketIOHandler implements ConnectionHandler, Parcelable {
 		}
 	}
 	
+	@Override
 	public void leave() {
 		try {
 			client.emit("leave", null);

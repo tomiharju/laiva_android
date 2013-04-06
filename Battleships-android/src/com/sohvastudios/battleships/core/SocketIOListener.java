@@ -6,21 +6,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
-import com.sohvastudios.battleships.game.core.NativeActions;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.utilities.Turn;
 
 
 public class SocketIOListener implements SocketIOClient.Handler {
 	
-	private NativeActions nativeActions;
+	private NativeActionsImpl nativeActions;
 	private GameLogicHandler logicHandler;
 	
-	public void setNativeActionsHandler(NativeActions nativeActions) {
+	public void setNativeActionsHandler(NativeActionsImpl nativeActions) {
 		this.nativeActions = nativeActions;
 	}
 	
@@ -107,6 +107,10 @@ public class SocketIOListener implements SocketIOClient.Handler {
 			
 			nativeActions.dismissProgressDialog();
 			nativeActions.launchGameIntent();
+		} else if(event.equals("playerLeft")) {
+			Log.d("battleships", "Opponent left");
+			
+			logicHandler.opponentLeft();
 		}
 	}
 
