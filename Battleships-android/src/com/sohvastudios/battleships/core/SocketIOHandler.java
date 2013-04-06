@@ -1,6 +1,5 @@
-package com.me.Battleships;
+package com.sohvastudios.battleships.core;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -8,14 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Core.ConnectionHandler;
-import Utilities.Turn;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
+import com.sohvastudios.battleships.game.core.ConnectionHandler;
+import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
+import com.sohvastudios.battleships.game.utilities.Turn;
 
 public class SocketIOHandler implements ConnectionHandler, Parcelable {
 	
@@ -27,7 +27,7 @@ public class SocketIOHandler implements ConnectionHandler, Parcelable {
 	}
 
 	@Override
-	public void setLogicHandler(GameLogic.GameLogicHandler logicHandler) {
+	public void setLogicHandler(GameLogicHandler logicHandler) {
 		Log.d("battleships", "Assigning logicHandler to socketListener");
 		if(socketListener == null) {
 			Log.d("battleships", "is null :(");
@@ -46,9 +46,13 @@ public class SocketIOHandler implements ConnectionHandler, Parcelable {
 		Log.d("battleships", "Disconnecting");
 		try {
 			client.disconnect();
-		} catch (IOException e) {
+			//client.emit("askDisconnect", null);
+			client = null;
+		} catch (Exception e) {
 			Log.d("battleships", "Error disconnecting.");
 			e.printStackTrace();
+		} finally {
+			client = null;
 		}
 	}
 

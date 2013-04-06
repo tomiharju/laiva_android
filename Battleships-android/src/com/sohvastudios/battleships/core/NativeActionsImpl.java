@@ -1,13 +1,14 @@
-package com.me.Battleships;
+package com.sohvastudios.battleships.core;
 
-import Core.CancelListener;
-import Core.NativeActions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.sohvastudios.battleships.game.core.CancelListener;
+import com.sohvastudios.battleships.game.core.NativeActions;
 
 public class NativeActionsImpl implements NativeActions, Parcelable {
 	

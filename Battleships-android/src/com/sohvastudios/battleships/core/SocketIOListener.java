@@ -1,4 +1,4 @@
-package com.me.Battleships;
+package com.sohvastudios.battleships.core;
 
 import java.util.ArrayList;
 
@@ -6,21 +6,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Core.NativeActions;
-import GameLogic.GameLogicHandler;
-import Utilities.Turn;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
+import com.sohvastudios.battleships.game.core.NativeActions;
+import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
+import com.sohvastudios.battleships.game.utilities.Turn;
 
 
 public class SocketIOListener implements SocketIOClient.Handler {
-	private final NativeActions nativeActions;
 	
+	private NativeActions nativeActions;
 	private GameLogicHandler logicHandler;
 	
-	public SocketIOListener(NativeActions nativeActions) {
+	public void setNativeActionsHandler(NativeActions nativeActions) {
 		this.nativeActions = nativeActions;
 	}
 	
@@ -118,8 +118,7 @@ public class SocketIOListener implements SocketIOClient.Handler {
 
 	@Override
 	public void onError(Exception error) {
-		Log.e("battleships", "error: " + error.getMessage());
-		error.printStackTrace();
+		Log.e("battleships", "Error: " + error.getMessage());
 		// TODO Notify logicHandler of error in connection
 	}
 	

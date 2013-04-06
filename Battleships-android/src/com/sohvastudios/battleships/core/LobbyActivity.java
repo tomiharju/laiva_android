@@ -1,12 +1,12 @@
-package com.me.Battleships;
+package com.sohvastudios.battleships.core;
 
-import Core.CancelListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +14,9 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.me.Battleships.R;
+import com.sohvastudios.battleships.game.core.CancelListener;
 
 public class LobbyActivity extends Activity {
 
@@ -27,14 +30,13 @@ public class LobbyActivity extends Activity {
         setContentView(R.layout.lobby);
         
         // Create nativeActions for creating progress dialogs
-        // Context required for dialogs
         nativeActions = new NativeActionsImpl(this);
         
         // Socket connection listener
-        // NativeActions required for handling dialogs and launching game
-        SocketIOListener socketInputHandler = new SocketIOListener(nativeActions);
+        SocketIOListener socketListener = new SocketIOListener();
+        socketListener.setNativeActionsHandler(nativeActions);
         
-        socketHandler = new SocketIOHandler(socketInputHandler);
+        socketHandler = new SocketIOHandler(socketListener);
         socketHandler.connect();
         
         nativeActions.setParcels(socketHandler);
@@ -50,7 +52,7 @@ public class LobbyActivity extends Activity {
         matchmake.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				nativeActions.createProgressDialog("Waiting..", "Waiting for opponent.", true, new CancelListener() {
+				nativeActions.createProgressDialog("Matchmaking", "Looking for opponent", true, new CancelListener() {
 					@Override
 					public void cancel() {
 						socketHandler.leave();
@@ -65,22 +67,27 @@ public class LobbyActivity extends Activity {
 			public void onClick(View v) {
 				final EditText input = new EditText(LobbyActivity.this);
 				input.setText("test");
+				
 				new AlertDialog.Builder(LobbyActivity.this)
-					.setTitle("Room name")
-					.setMessage("Enter room name")
+					.setTitle("Custom game")
+					.setMessage("Enter game name")
 					.setView(input)
 					.setPositiveButton("Join", new DialogInterface.OnClickListener() {			
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							// Hide keyboard
 							InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 							imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-							nativeActions.createProgressDialog("Waiting...", "Waiting for opponent.", true, new CancelListener() {
+							
+							CharSequence room = input.getText();
+							
+							nativeActions.createProgressDialog("Game " + room, "Waiting for opponent", true, new CancelListener() {
 								@Override
 								public void cancel() {
 									socketHandler.leave();
 								}
 							});
-							CharSequence room = input.getText();
+							
 							socketHandler.join(room);
 						}
 					})
@@ -106,10 +113,19 @@ public class LobbyActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.menu_settings:
+			Log.d("battleships", "Pressed disconnect");
 			socketHandler.disconnect();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);	
 		}
 	}
+
+	@Override
+	public void onBackPressed() {
+		socketHandler.disconnect();
+		super.onBackPressed();
+	}
+	
+	
 }

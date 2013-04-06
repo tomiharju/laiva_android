@@ -1,7 +1,5 @@
-package com.me.Battleships;
+package com.sohvastudios.battleships.core;
 
-import Core.Main;
-import Core.NativeActions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +8,8 @@ import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.sohvastudios.battleships.game.core.Main;
+import com.sohvastudios.battleships.game.core.NativeActions;
 
 public class GameActivity extends AndroidApplication {
 	
@@ -52,7 +52,7 @@ public class GameActivity extends AndroidApplication {
 					GameActivity.this.back();
 				}
 			})
-			.setNegativeButton("Never give up.", new DialogInterface.OnClickListener() {
+			.setNegativeButton("Back to the batle!.", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// Cancel
