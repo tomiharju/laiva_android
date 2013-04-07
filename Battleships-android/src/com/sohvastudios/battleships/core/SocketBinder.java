@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Binder;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -15,22 +16,13 @@ import com.sohvastudios.battleships.game.core.ConnectionHandler;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.utilities.Turn;
 
-public class SocketIOHandler implements ConnectionHandler {
+public class SocketBinder extends Binder implements ConnectionHandler {
 	
-	private static SocketIOClient client;
-	private static SocketIOListener socketListener;
+	private SocketIOClient client;
+	private final SocketIOListener socketListener;
 	
-	public SocketIOHandler(SocketIOListener handler) {
-		this.socketListener = handler;
-	}
-
-	@Override
-	public void setLogicHandler(GameLogicHandler logicHandler) {
-		Log.d("battleships", "Assigning logicHandler to socketListener");
-		if(socketListener == null) {
-			Log.d("battleships", "is null :(");
-		}
-		socketListener.setGameLogicHandler(logicHandler);		
+	public SocketBinder(SocketIOListener socketListener) {
+		this.socketListener = socketListener;
 	}
 	
 	@Override
@@ -39,6 +31,12 @@ public class SocketIOHandler implements ConnectionHandler {
 		client.connect();
 	}
 	
+	@Override
+	public void setLogicHandler(GameLogicHandler logicHandler) {
+		Log.d("battleships", "Setting GameLogicHandler");
+		socketListener.setGameLogicHandler(logicHandler);
+	}
+
 	@Override
 	public void disconnect() {
 		Log.d("battleships", "Disconnecting");
@@ -103,6 +101,7 @@ public class SocketIOHandler implements ConnectionHandler {
 		}
 	}
 	
+	@Override
 	public void matchMake() {
 		try {
 			client.emit("matchmake", null);
@@ -112,6 +111,7 @@ public class SocketIOHandler implements ConnectionHandler {
 		}
 	}
 	
+	@Override
 	public void join(CharSequence room) {
 		JSONObject json = new JSONObject();
 		
@@ -136,4 +136,5 @@ public class SocketIOHandler implements ConnectionHandler {
 			e.printStackTrace();
 		}
 	}
+
 }

@@ -3,9 +3,13 @@ package com.sohvastudios.battleships.core;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,11 +20,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.sohvastudios.battleships.game.core.CancelListener;
+import com.sohvastudios.battleships.game.core.ConnectionHandler;
 
 public class LobbyActivity extends Activity {
 
-    public static SocketIOHandler socketHandler;
-    public static NativeActionsImpl nativeActions;
+    public ConnectionHandler socketHandler;
+    public NativeActionsImpl nativeActions;
     public ProgressDialog progress;
 
 	@Override
@@ -30,13 +35,12 @@ public class LobbyActivity extends Activity {
         
         // Create nativeActions for creating progress dialogs
         nativeActions = new NativeActionsImpl(this);
+    
+        bindService(new Intent(this, SocketService.class), serviceConnection, BIND_AUTO_CREATE);
         
-        // Socket connection listener
-        SocketIOListener socketListener = new SocketIOListener();
-        socketListener.setNativeActionsHandler(nativeActions);
-        
-        socketHandler = new SocketIOHandler(socketListener);
-        socketHandler.connect();
+        if(socketHandler == null) {
+        	Log.d("battleships", "state is null");
+        }
         
         setButtonListeners();
        
@@ -123,5 +127,22 @@ public class LobbyActivity extends Activity {
 		super.onBackPressed();
 	}
 	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unbindService(serviceConnection);
+	}
+	
+	private final ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName arg0, IBinder binder) {
+			socketHandler = ((SocketBinder) binder);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			socketHandler = null;
+		}
+	};
 	
 }

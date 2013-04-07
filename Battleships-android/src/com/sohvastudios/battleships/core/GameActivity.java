@@ -1,29 +1,34 @@
 package com.sohvastudios.battleships.core;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.sohvastudios.battleships.game.core.ConfirmListener;
+import com.sohvastudios.battleships.game.core.ConnectionHandler;
 import com.sohvastudios.battleships.game.core.Main;
 import com.sohvastudios.battleships.game.core.NativeActions;
 
 public class GameActivity extends AndroidApplication {
 	
 	private NativeActions nativeActions;
-	private SocketIOHandler socketHandler;
+	private ConnectionHandler socketHandler;
+	private Main game;
 		
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("battleships", "GameActivity launched");
         
-        Intent intent = getIntent();
-        
         nativeActions = new NativeActionsImpl(this);
-       
+
+        bindService(new Intent(this.getApplicationContext(), SocketService.class), serviceConnection, BIND_AUTO_CREATE);
+        
         startGame();
     }
 	
@@ -33,8 +38,10 @@ public class GameActivity extends AndroidApplication {
         cfg.useCompass =false;
         cfg.useAccelerometer = false;
         cfg.useWakelock=true;
+        
+        game = new Main(nativeActions);
      
-        initialize(new Main(socketHandler, nativeActions), cfg);
+        initialize(game, cfg);
 	}
 
 	@Override
@@ -61,5 +68,24 @@ public class GameActivity extends AndroidApplication {
 		super.onBackPressed();
 	}
 	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unbindService(serviceConnection);
+	}
+	
+	private final ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName arg0, IBinder binder) {
+			Log.d("battleships", "Service connected.");
+			socketHandler = ((SocketBinder) binder);
+			game.loadGame(socketHandler);
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			socketHandler = null;
+		}
+	};
 	
 }

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 
 import com.sohvastudios.battleships.game.core.CancelListener;
 import com.sohvastudios.battleships.game.core.ConfirmListener;
@@ -12,11 +13,8 @@ import com.sohvastudios.battleships.game.core.NativeActions;
 
 public class NativeActionsImpl implements NativeActions {
 	
-	private ProgressDialog progressDialog;
-	private static Context ctx;
-	
-	private SocketIOHandler socketHandler;
-	
+	private static ProgressDialog progressDialog;
+	private final Context ctx;
 	
 	public NativeActionsImpl(Context ctx) {
 		this.ctx = ctx;
@@ -25,6 +23,7 @@ public class NativeActionsImpl implements NativeActions {
 	public void launchGameIntent() {
 		Intent intent = new Intent(ctx, GameActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		ctx.startActivity(intent);
 	}
 
@@ -46,6 +45,7 @@ public class NativeActionsImpl implements NativeActions {
 	@Override
 	public void dismissProgressDialog() {
 		if(progressDialog == null || !progressDialog.isShowing()) {
+			Log.d("battleships", "No ProgressDialog to be dismissed.");
 			return;
 		}
 		progressDialog.dismiss();

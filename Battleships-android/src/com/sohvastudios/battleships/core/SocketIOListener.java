@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
