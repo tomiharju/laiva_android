@@ -16,12 +16,12 @@ import com.sohvastudios.battleships.game.core.ConnectionHandler;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.utilities.Turn;
 
-public class SocketBinder extends Binder implements ConnectionHandler {
+public class SocketHandler extends Binder implements ConnectionHandler {
 	
 	private SocketIOClient client;
-	private final SocketIOListener socketListener;
+	private final SocketListener socketListener;
 	
-	public SocketBinder(SocketIOListener socketListener) {
+	public SocketHandler(SocketListener socketListener) {
 		this.socketListener = socketListener;
 	}
 	

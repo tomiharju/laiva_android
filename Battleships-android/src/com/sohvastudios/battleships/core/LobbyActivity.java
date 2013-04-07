@@ -136,7 +136,7 @@ public class LobbyActivity extends Activity {
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName arg0, IBinder binder) {
-			socketHandler = ((SocketBinder) binder);
+			socketHandler = ((SocketHandler) binder);
 		}
 
 		@Override

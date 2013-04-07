@@ -14,7 +14,7 @@ import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.utilities.Turn;
 
 
-public class SocketIOListener implements SocketIOClient.Handler {
+public class SocketListener implements SocketIOClient.Handler {
 	
 	private NativeActionsImpl nativeActions;
 	private GameLogicHandler logicHandler;

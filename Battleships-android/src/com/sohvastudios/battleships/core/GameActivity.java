@@ -78,7 +78,7 @@ public class GameActivity extends AndroidApplication {
 		@Override
 		public void onServiceConnected(ComponentName arg0, IBinder binder) {
 			Log.d("battleships", "Service connected.");
-			socketHandler = ((SocketBinder) binder);
+			socketHandler = ((SocketHandler) binder);
 			game.loadGame(socketHandler);
 		}
 

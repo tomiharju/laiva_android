@@ -7,16 +7,16 @@ import android.util.Log;
 
 public class SocketService extends Service {
 	
-	private SocketBinder socketBinder;
+	private SocketHandler socketBinder;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.d("battleships", "Creating SocketService");
 		
-		SocketIOListener socketListener = new SocketIOListener();
+		SocketListener socketListener = new SocketListener();
 		socketListener.setNativeActionsHandler(new NativeActionsImpl(this.getApplicationContext()));
-		socketBinder = new SocketBinder(socketListener);
+		socketBinder = new SocketHandler(socketListener);
 		
 		socketBinder.connect();
 	}
