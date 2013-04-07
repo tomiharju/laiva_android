@@ -38,8 +38,6 @@ public class LobbyActivity extends Activity {
         socketHandler = new SocketIOHandler(socketListener);
         socketHandler.connect();
         
-        nativeActions.setParcels(socketHandler);
-        
         setButtonListeners();
        
     }

@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -17,7 +15,7 @@ import com.sohvastudios.battleships.game.core.ConnectionHandler;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.utilities.Turn;
 
-public class SocketIOHandler implements ConnectionHandler, Parcelable {
+public class SocketIOHandler implements ConnectionHandler {
 	
 	private static SocketIOClient client;
 	private static SocketIOListener socketListener;
@@ -138,33 +136,4 @@ public class SocketIOHandler implements ConnectionHandler, Parcelable {
 			e.printStackTrace();
 		}
 	}
-	
-	// Parcelable stuff
-	
-	private int mData;
-	
-	private SocketIOHandler(Parcel in) {
-		mData = in.readInt();
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(mData);
-	}
-	
-	public static final Parcelable.Creator<SocketIOHandler> CREATOR = new Parcelable.Creator<SocketIOHandler>() {
-		@Override
-		public SocketIOHandler createFromParcel(Parcel source) {
-			return new SocketIOHandler(source);
-		}
-		@Override
-		public SocketIOHandler[] newArray(int size) {
-			return new SocketIOHandler[size];
-		}
-	};
 }

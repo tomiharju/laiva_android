@@ -23,8 +23,6 @@ public class GameActivity extends AndroidApplication {
         Intent intent = getIntent();
         
         nativeActions = new NativeActionsImpl(this);
-        //nativeActions = (NativeActions) intent.getParcelableExtra("NativeActions");
-        socketHandler = (SocketIOHandler) intent.getParcelableExtra("SocketHandler");
        
         startGame();
     }
