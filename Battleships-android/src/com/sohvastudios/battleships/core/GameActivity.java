@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -12,11 +13,10 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.sohvastudios.battleships.game.core.ConfirmListener;
 import com.sohvastudios.battleships.game.core.ConnectionHandler;
 import com.sohvastudios.battleships.game.core.Main;
-import com.sohvastudios.battleships.game.core.NativeActions;
 
 public class GameActivity extends AndroidApplication {
 	
-	private NativeActions nativeActions;
+	private NativeActionsImpl nativeActions;
 	private ConnectionHandler socketHandler;
 	private Main game;
 		
@@ -26,6 +26,8 @@ public class GameActivity extends AndroidApplication {
         Log.d("battleships", "GameActivity launched");
         
         nativeActions = new NativeActionsImpl(this);
+        Handler handler = new Handler();
+        nativeActions.setHandler(handler);
 
         bindService(new Intent(this.getApplicationContext(), SocketService.class), serviceConnection, BIND_AUTO_CREATE);
         

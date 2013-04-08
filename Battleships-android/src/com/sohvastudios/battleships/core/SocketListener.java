@@ -121,7 +121,7 @@ public class SocketListener implements SocketIOClient.Handler {
 
 	@Override
 	public void onError(Exception error) {
-		Log.e("battleships", "Error: " + error.getMessage());
+		Log.e("battleships", "SocketError: " + error.getMessage());
 		// TODO Notify logicHandler of error in connection
 	}
 	
