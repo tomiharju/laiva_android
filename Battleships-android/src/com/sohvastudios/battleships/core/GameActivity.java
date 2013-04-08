@@ -10,9 +10,9 @@ import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.sohvastudios.battleships.game.core.ConfirmListener;
-import com.sohvastudios.battleships.game.core.ConnectionHandler;
 import com.sohvastudios.battleships.game.core.Main;
+import com.sohvastudios.battleships.game.nativeinterface.ConfirmListener;
+import com.sohvastudios.battleships.game.nativeinterface.ConnectionHandler;
 
 public class GameActivity extends AndroidApplication {
 	

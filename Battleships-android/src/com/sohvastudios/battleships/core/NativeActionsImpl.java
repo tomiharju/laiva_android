@@ -7,10 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.sohvastudios.battleships.game.core.CancelListener;
-import com.sohvastudios.battleships.game.core.ConfirmListener;
-import com.sohvastudios.battleships.game.core.NativeActions;
+import com.sohvastudios.battleships.game.nativeinterface.CancelListener;
+import com.sohvastudios.battleships.game.nativeinterface.ConfirmListener;
+import com.sohvastudios.battleships.game.nativeinterface.NativeActions;
 
 public class NativeActionsImpl implements NativeActions {
 	
@@ -24,17 +25,11 @@ public class NativeActionsImpl implements NativeActions {
 		handler = new Handler();
 	}
 	
-	@Override
 	public void launchGameIntent() {
 		Intent intent = new Intent(ctx, GameActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		ctx.startActivity(intent);
-	}
-
-	@Override
-	public void createProgressDialog(String title, String message, boolean cancelable) {
-		progressDialog = ProgressDialog.show(ctx, title, message, true, cancelable);
 	}
 	
 	@Override
@@ -68,20 +63,30 @@ public class NativeActionsImpl implements NativeActions {
 			@Override
 			public void run() {
 				new AlertDialog.Builder(ctx)
-				.setTitle(title)
-				.setMessage(message)
-				.setPositiveButton(yes, new DialogInterface.OnClickListener() {	
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						confirmListener.yes();				}
-				})
-				.setNegativeButton(no, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						confirmListener.no();
-					}
-				})
-				.show();
+					.setTitle(title)
+					.setMessage(message)
+					.setPositiveButton(yes, new DialogInterface.OnClickListener() {	
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							confirmListener.yes();				}
+					})
+					.setNegativeButton(no, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							confirmListener.no();
+						}
+					})
+					.show();
+			}
+		});
+	}
+	
+	@Override
+	public void createToast(final String text, final int duration) {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(ctx, text, duration).show();
 			}
 		});
 	}
