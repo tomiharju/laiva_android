@@ -11,6 +11,7 @@ import android.util.Log;
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
+import com.sohvastudios.battleships.game.nativeinterface.ConnectivityListener;
 import com.sohvastudios.battleships.game.utilities.Turn;
 
 
@@ -18,6 +19,7 @@ public class SocketListener implements SocketIOClient.Handler {
 	
 	private NativeActionsImpl nativeActions;
 	private GameLogicHandler logicHandler;
+	private ConnectivityListener connectivityListener;
 	
 	public void setNativeActionsHandler(NativeActionsImpl nativeActions) {
 		this.nativeActions = nativeActions;
@@ -27,10 +29,26 @@ public class SocketListener implements SocketIOClient.Handler {
 		this.logicHandler = logicHandler;
 	}
 	
+	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
+		this.connectivityListener = lobbyHandler;
+	}
+	
 	@Override
 	public void onConnect() {
 		 Log.d("battleships", "Connected!");
-		 // TODO Notify logicHandler of successful connection
+		 connectivityListener.onConnect();;
+	}
+	
+	@Override
+	public void onDisconnect(int code, String reason) {
+		Log.d("battleships", code + " onDisconnect reason: " + reason);
+	}
+
+	@Override
+	public void onError(Exception error) {
+		Log.e("battleships", "Socket Exception:", error);
+
+		connectivityListener.onError();
 	}
 
 	@Override
@@ -111,18 +129,6 @@ public class SocketListener implements SocketIOClient.Handler {
 			
 			logicHandler.opponentLeft();
 		}
-	}
-
-	@Override
-	public void onDisconnect(int code, String reason) {
-		// TODO Notify logicHandler of disconnection so it can pause game and attempt to reconnect
-		Log.d("battleships", code + " onDisconnect reason: " + reason);
-	}
-
-	@Override
-	public void onError(Exception error) {
-		Log.e("battleships", "SocketError: " + error.getMessage());
-		// TODO Notify logicHandler of error in connection
 	}
 	
 	@Override

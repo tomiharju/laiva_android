@@ -18,7 +18,7 @@ public class SocketService extends Service {
 		socketListener.setNativeActionsHandler(new NativeActionsImpl(this.getApplicationContext()));
 		socketBinder = new SocketHandler(socketListener);
 		
-		socketBinder.connect();
+		//socketBinder.connect();
 	}
 
 	@Override
