@@ -11,7 +11,7 @@ import android.util.Log;
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
-import com.sohvastudios.battleships.game.nativeinterface.ConnectivityListener;
+import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
 
 
 public class SocketListener implements SocketIOClient.Handler {
