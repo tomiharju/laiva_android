@@ -9,9 +9,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.sohvastudios.battleships.game.nativeinterface.CancelListener;
-import com.sohvastudios.battleships.game.nativeinterface.ConfirmListener;
-import com.sohvastudios.battleships.game.nativeinterface.NativeActions;
+import com.sohvastudios.battleships.game.interfaces.CancelListener;
+import com.sohvastudios.battleships.game.interfaces.ConfirmListener;
+import com.sohvastudios.battleships.game.interfaces.NativeActions;
 
 public class NativeActionsImpl implements NativeActions {
 	

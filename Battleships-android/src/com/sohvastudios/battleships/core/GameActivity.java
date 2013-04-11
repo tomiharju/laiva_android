@@ -11,8 +11,8 @@ import android.util.Log;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.sohvastudios.battleships.game.core.Main;
-import com.sohvastudios.battleships.game.nativeinterface.ConfirmListener;
-import com.sohvastudios.battleships.game.nativeinterface.ConnectionHandler;
+import com.sohvastudios.battleships.game.interfaces.ConfirmListener;
+import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
 
 public class GameActivity extends AndroidApplication {
 	
