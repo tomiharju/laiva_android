@@ -19,8 +19,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.sohvastudios.battleships.game.nativeinterface.CancelListener;
-import com.sohvastudios.battleships.game.nativeinterface.ConnectionHandler;
+import com.sohvastudios.battleships.game.interfaces.CancelListener;
+import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
 
 public class LobbyActivity extends Activity {
 
