@@ -14,7 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
-import com.sohvastudios.battleships.game.utilities.Turn;
+
+import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
+
 
 public class SocketHandler extends Binder implements ConnectionHandler {
 	
@@ -36,6 +38,10 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 		Log.d("battleships", "Setting GameLogicHandler");
 		socketListener.setGameLogicHandler(logicHandler);
 	}
+	
+	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
+		socketListener.setConnectivityListener(lobbyHandler);
+	}
 
 	@Override
 	public void disconnect() {
@@ -52,54 +58,6 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 		}
 	}
 
-	@Override
-	public void sendReady(Turn t) {
-		Log.d("battleships", "emitting ready");
-		try {
-			client.emit("ready", null);
-		} catch (JSONException e1) {
-			e1.printStackTrace();
-		}
-	}
-
-	@Override
-	public void sendShoot(Turn t) {
-		Log.d("battleships", "emitting turn");
-
-		JSONArray jsonArray = new JSONArray();
-		JSONObject json = new JSONObject();
-		
-		try {
-			json.put("x", t.x);
-			json.put("y", t.y);
-			json.put("weapon", t.weapon);
-			
-			jsonArray.put(json);
-			client.emit("shoot", jsonArray);
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void sendResult(Turn t) {
-		ArrayList<Vector2> hits = t.hits;
-		try {
-			JSONArray array = new JSONArray();
-
-			for(Vector2	hit : hits) {
-				JSONArray subArray = new JSONArray();
-
-				subArray.put(hit.x);
-				subArray.put(hit.y);
-				array.put(subArray);
-			}
-			client.emit("result", new JSONArray().put(array));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Override
 	public void matchMake() {
@@ -137,4 +95,52 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 		}
 	}
 
+	@Override
+	public void sendReady() {
+		Log.d("battleships", "emitting ready");
+		try {
+			client.emit("ready", null);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void sendShoot(float x, float y, int weapon) {
+		Log.d("battleships", "emitting turn");
+
+		JSONArray jsonArray = new JSONArray();
+		JSONObject json = new JSONObject();
+		
+		try {
+			json.put("x", x);
+			json.put("y", y);
+			json.put("weapon", weapon);
+			
+			jsonArray.put(json);
+			client.emit("shoot", jsonArray);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void sendResult(ArrayList<Vector2> results) {
+
+		try {
+			JSONArray array = new JSONArray();
+
+			for(Vector2	hit : results) {
+				JSONArray subArray = new JSONArray();
+
+				subArray.put(hit.x);
+				subArray.put(hit.y);
+				array.put(subArray);
+			}
+			client.emit("result", new JSONArray().put(array));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 }

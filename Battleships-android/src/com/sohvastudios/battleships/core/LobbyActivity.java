@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
@@ -18,29 +19,47 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.sohvastudios.battleships.game.interfaces.CancelListener;
-import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
 
-public class LobbyActivity extends Activity {
+import com.sohvastudios.battleships.game.interfaces.ConfirmListener;
+import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
 
-    public ConnectionHandler socketHandler;
+
+public class LobbyActivity extends Activity implements ConnectivityListener {
+
+    public SocketHandler socketHandler;
     public NativeActionsImpl nativeActions;
     public ProgressDialog progress;
+    
+    private TextView status;
+    private Handler handler;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lobby);
         
+        handler = new Handler();
+        
         // Create nativeActions for creating progress dialogs
         nativeActions = new NativeActionsImpl(this);
+        
+        nativeActions.createProgressDialog("Connecting", "Connecting, please wait", true, new CancelListener() {
+			@Override
+			public void cancel() {
+				// Cancel
+			}      	
+        });
     
         bindService(new Intent(this, SocketService.class), serviceConnection, BIND_AUTO_CREATE);
         
         if(socketHandler == null) {
         	Log.d("battleships", "state is null");
         }
+        
+        status = (TextView) findViewById(R.id.status);
         
         setButtonListeners();
        
@@ -137,6 +156,8 @@ public class LobbyActivity extends Activity {
 		@Override
 		public void onServiceConnected(ComponentName arg0, IBinder binder) {
 			socketHandler = ((SocketHandler) binder);
+			socketHandler.setConnectivityListener(LobbyActivity.this);
+			socketHandler.connect();
 		}
 
 		@Override
@@ -144,5 +165,43 @@ public class LobbyActivity extends Activity {
 			socketHandler = null;
 		}
 	};
+
+	@Override
+	public void onConnect() {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				nativeActions.dismissProgressDialog();
+				status.setText("Connected");
+			}
+		});
+	}
+	
+	@Override
+	public void onError() {
+		nativeActions.createConfirmDialog(
+				"Disconnected", 
+				"Conenection to server was lost", 
+				"Attempt reconnect", 
+				"Exit", 
+				new ConfirmListener() {
+					@Override
+					public void yes() {
+						socketHandler.connect();
+					}
+
+					@Override
+					public void no() {
+						finish();
+					}
+		});
+		
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				status.setText("Connection error");
+			}
+		});
+	}
 	
 }

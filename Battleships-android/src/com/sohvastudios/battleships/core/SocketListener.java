@@ -11,13 +11,14 @@ import android.util.Log;
 import com.badlogic.gdx.math.Vector2;
 import com.codebutler.android_websockets.SocketIOClient;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
-import com.sohvastudios.battleships.game.utilities.Turn;
+import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
 
 
 public class SocketListener implements SocketIOClient.Handler {
 	
 	private NativeActionsImpl nativeActions;
 	private GameLogicHandler logicHandler;
+	private ConnectivityListener connectivityListener;
 	
 	public void setNativeActionsHandler(NativeActionsImpl nativeActions) {
 		this.nativeActions = nativeActions;
@@ -27,10 +28,26 @@ public class SocketListener implements SocketIOClient.Handler {
 		this.logicHandler = logicHandler;
 	}
 	
+	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
+		this.connectivityListener = lobbyHandler;
+	}
+	
 	@Override
 	public void onConnect() {
 		 Log.d("battleships", "Connected!");
-		 // TODO Notify logicHandler of successful connection
+		 connectivityListener.onConnect();;
+	}
+	
+	@Override
+	public void onDisconnect(int code, String reason) {
+		Log.d("battleships", code + " onDisconnect reason: " + reason);
+	}
+
+	@Override
+	public void onError(Exception error) {
+		Log.e("battleships", "Socket Exception:", error);
+
+		connectivityListener.onError();
 	}
 
 	@Override
@@ -38,26 +55,27 @@ public class SocketListener implements SocketIOClient.Handler {
 
 		if(event.equals("start")) {
 			Log.d("battleships", "received start");
-			logicHandler.receiveTurn(new Turn(Turn.TURN_START));
+			logicHandler.receiveStart();
 			
 		} else if(event.equals("wait")) {
 			Log.d("battleships", "received wait");
 			nativeActions.dismissProgressDialog();
-			logicHandler.receiveTurn(new Turn(Turn.TURN_WAIT));
+			logicHandler.receiveWait();
 			
 		} else if(event.equals("shoot")) {
 			Log.d("battleships", "received shoot");
+			
+			float x, y;
+			int weapon;
 
 			try {
 				JSONObject json = arguments.getJSONObject(0);
-				Turn turn = new Turn(Turn.TURN_SHOOT);
-				turn.x = (float) json.getDouble("x");
-				turn.y = (float) json.getDouble("y");
-				turn.weapon = json.getInt("weapon");
+
+				x = (float) json.getDouble("x");
+				y = (float) json.getDouble("y");
+				weapon = json.getInt("weapon");
 				
-				Log.d("battleships", "got hit on " + turn.x + " " + turn.y + " by " + turn.weapon);
-				
-				logicHandler.receiveTurn(turn);
+				logicHandler.receiveShoot(x, y, weapon);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -66,7 +84,7 @@ public class SocketListener implements SocketIOClient.Handler {
 		} else if(event.equals("result")) {
 			// Result after shoot
 			
-			ArrayList<Vector2> hits = new ArrayList<Vector2>();
+			ArrayList<Vector2> result = new ArrayList<Vector2>();
 
 			try {
 				arguments = arguments.getJSONArray(0);
@@ -89,17 +107,14 @@ public class SocketListener implements SocketIOClient.Handler {
 					vector.y = (float) subArray.getDouble(1);
 					
 					Log.d("battleships", vector.toString());
-					hits.add(vector);
+					result.add(vector);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			Turn turn = new Turn(Turn.TURN_RESULT);
-			turn.hits = hits;
-			
-			logicHandler.receiveTurn(turn);
+
+			logicHandler.receiveResult(result);
 		} else if(event.equals("launch")) {
 			// Launch game
 			Log.d("battleships", "Launching");
@@ -111,18 +126,6 @@ public class SocketListener implements SocketIOClient.Handler {
 			
 			logicHandler.opponentLeft();
 		}
-	}
-
-	@Override
-	public void onDisconnect(int code, String reason) {
-		// TODO Notify logicHandler of disconnection so it can pause game and attempt to reconnect
-		Log.d("battleships", code + " onDisconnect reason: " + reason);
-	}
-
-	@Override
-	public void onError(Exception error) {
-		Log.e("battleships", "SocketError: " + error.getMessage());
-		// TODO Notify logicHandler of error in connection
 	}
 	
 	@Override
