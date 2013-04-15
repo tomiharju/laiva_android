@@ -44,12 +44,12 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
         // Create nativeActions for creating progress dialogs
         nativeActions = new NativeActionsImpl(this);
         
-        nativeActions.createProgressDialog("Connecting", "Connecting, please wait", true, new CancelListener() {
+        /*nativeActions.createProgressDialog("Connecting", "Connecting, please wait", true, new CancelListener() {
 			@Override
 			public void cancel() {
 				// Cancel
 			}      	
-        });
+        });*/
     
         bindService(new Intent(this, SocketService.class), serviceConnection, BIND_AUTO_CREATE);
         
@@ -140,7 +140,9 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 
 	@Override
 	public void onBackPressed() {
+		
 		socketHandler.disconnect();
+		
 		super.onBackPressed();
 	}
 	
@@ -155,7 +157,7 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 		public void onServiceConnected(ComponentName arg0, IBinder binder) {
 			socketHandler = ((SocketHandler) binder);
 			socketHandler.setConnectivityListener(LobbyActivity.this);
-			socketHandler.connect();
+			//socketHandler.connect();
 		}
 
 		@Override

@@ -1,6 +1,5 @@
 package com.sohvastudios.battleships.core;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -11,7 +10,9 @@ import android.os.Binder;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.codebutler.android_websockets.SocketIOClient;
+import com.koushikdutta.async.http.AsyncHttpClient;
+import com.koushikdutta.async.http.SocketIOClient;
+import com.koushikdutta.async.http.SocketIOClient.SocketIOConnectCallback;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
@@ -20,15 +21,44 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	
 	private SocketIOClient client;
 	private final SocketListener socketListener;
+	private ConnectivityListener connectivityListener;
 	
 	public SocketHandler(SocketListener socketListener) {
+		Log.d("battleships", "SocketHandler created");
 		this.socketListener = socketListener;
+		
+		SocketIOClient.connect(
+				AsyncHttpClient.getDefaultInstance(),
+				"http://198.211.119.249:8081", 
+				new SocketIOConnectCallback() {		
+					@Override
+					public void onConnectCompleted(Exception ex, SocketIOClient client) {
+						//connectivityListener.onConnect();
+						
+						//SocketHandler.this.client = client;
+						
+						//client.setEventCallback(SocketHandler.this.socketListener);
+						/*client.setClosedCallback(new CompletedCallback() {
+							
+							@Override
+							public void onCompleted(Exception ex) {
+								if(ex != null) {
+									connectivityListener.onError();
+									return;
+								}
+								Log.d("battleships", "Disconnected gracefully");
+								//connectivityListener.onError();								
+							}
+						});*/
+						
+						client.disconnect();
+					}
+				});
 	}
 	
 	@Override
 	public void connect() {
-		client = new SocketIOClient(URI.create("http://198.211.119.249:8081"), socketListener);
-		client.connect();
+		
 	}
 	
 	@Override
@@ -38,6 +68,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	}
 	
 	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
+		this.connectivityListener = lobbyHandler;
 		socketListener.setConnectivityListener(lobbyHandler);
 	}
 
@@ -47,12 +78,9 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 		try {
 			client.disconnect();
 			//client.emit("askDisconnect", null);
-			client = null;
 		} catch (Exception e) {
 			Log.d("battleships", "Error disconnecting.");
 			e.printStackTrace();
-		} finally {
-			client = null;
 		}
 	}
 

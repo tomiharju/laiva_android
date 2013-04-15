@@ -9,12 +9,13 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.codebutler.android_websockets.SocketIOClient;
+import com.koushikdutta.async.callback.CompletedCallback;
+import com.koushikdutta.async.http.SocketIOClient.EventCallback;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
 
 
-public class SocketListener implements SocketIOClient.Handler {
+public class SocketListener implements EventCallback, CompletedCallback {
 	
 	private NativeActionsImpl nativeActions;
 	private GameLogicHandler logicHandler;
@@ -33,26 +34,17 @@ public class SocketListener implements SocketIOClient.Handler {
 	}
 	
 	@Override
-	public void onConnect() {
-		 Log.d("battleships", "Connected!");
-		 connectivityListener.onConnect();;
-	}
-	
-	@Override
-	public void onDisconnect(int code, String reason) {
-		Log.d("battleships", code + " onDisconnect reason: " + reason);
-	}
-
-	@Override
-	public void onError(Exception error) {
-		Log.e("battleships", "Socket Exception:", error);
-
-		connectivityListener.onError();
+	public void onCompleted(Exception ex) {
+		if(ex != null) {
+			connectivityListener.onError();
+			return;
+		}
+		Log.d("battleships", "Disconnected gracefully");
+		//connectivityListener.onError();
 	}
 
 	@Override
-	public void on(String event, JSONArray arguments) {
-
+	public void onEvent(String event, JSONArray arguments) {
 		if(event.equals("start")) {
 			Log.d("battleships", "received start");
 			logicHandler.receiveStart();
@@ -127,10 +119,4 @@ public class SocketListener implements SocketIOClient.Handler {
 			logicHandler.opponentLeft();
 		}
 	}
-	
-	@Override
-	public void onJSON(JSONObject json) { }
-
-	@Override
-	public void onMessage(String message) {}
 }
