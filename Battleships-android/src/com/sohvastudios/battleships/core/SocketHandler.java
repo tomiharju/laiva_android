@@ -2,6 +2,7 @@ package com.sohvastudios.battleships.core;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +12,7 @@ import android.os.Binder;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.codebutler.android_websockets.SocketIOClient;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
@@ -126,8 +128,8 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	}
 
 	@Override
-	public void sendResult(ArrayList<Vector2> results) {
-
+	public void sendResult(HashMap<ArrayList<Vector3>,ArrayList<Vector3>> result) {
+/*
 		try {
 			JSONArray array = new JSONArray();
 
@@ -141,6 +143,6 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 			client.emit("result", new JSONArray().put(array));
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

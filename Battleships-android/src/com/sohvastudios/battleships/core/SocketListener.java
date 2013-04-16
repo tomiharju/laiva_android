@@ -114,7 +114,7 @@ public class SocketListener implements SocketIOClient.Handler {
 				e.printStackTrace();
 			}
 
-			logicHandler.receiveResult(result);
+		//	logicHandler.receiveResult(result);
 		} else if(event.equals("launch")) {
 			// Launch game
 			Log.d("battleships", "Launching");
