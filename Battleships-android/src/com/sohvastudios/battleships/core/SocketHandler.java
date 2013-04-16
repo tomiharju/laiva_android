@@ -2,6 +2,8 @@ package com.sohvastudios.battleships.core;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,7 +12,7 @@ import org.json.JSONObject;
 import android.os.Binder;
 import android.util.Log;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.codebutler.android_websockets.SocketIOClient;
 import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectionHandler;
@@ -124,17 +126,38 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	}
 
 	@Override
-	public void sendResult(ArrayList<Vector2> results) {
+	public void sendResult(HashMap<ArrayList<Vector3>,ArrayList<Vector3>> results) {
 
 		try {
 			JSONArray array = new JSONArray();
 
-			for(Vector2	hit : results) {
-				JSONArray subArray = new JSONArray();
+			for(Map.Entry<ArrayList<Vector3>, ArrayList<Vector3>> shot : results.entrySet()) {
 
-				subArray.put(hit.x);
-				subArray.put(hit.y);
-				array.put(subArray);
+                ArrayList<Vector3> path = shot.getKey();
+                JSONArray pathList = new JSONArray();
+                for(int i=0; i<path.size(); i++) {
+                    pathList.put(
+                            new JSONObject()
+                                    .put("x", path.get(i).x)
+                                    .put("y", path.get(i).y));
+                }
+
+                ArrayList<Vector3> hits = shot.getValue();
+                JSONArray hitList = new JSONArray();
+                for(int i=0; i<hits.size(); i++) {
+                    hitList.put(
+                            new JSONObject()
+                                    .put("x", hits.get(i).x)
+                                    .put("y", hits.get(i).y));
+                }
+
+
+
+                JSONObject jsonShot = new JSONObject();
+                jsonShot.put("hits", hitList);
+                jsonShot.put("path", pathList);
+
+				array.put(jsonShot);
 			}
 			client.emit("result", new JSONArray().put(array));
 		} catch (JSONException e) {
