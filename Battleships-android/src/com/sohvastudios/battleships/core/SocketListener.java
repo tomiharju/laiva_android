@@ -89,7 +89,7 @@ public class SocketListener implements SocketIOClient.Handler {
 			HashMap<ArrayList<Vector3>, ArrayList<Vector3>> result = new HashMap<ArrayList<Vector3>, ArrayList<Vector3>>();
 
 			try {
-				arguments = arguments.getJSONArray(0);
+				//arguments = arguments.getJSONArray(0);
 
 
 				int len = arguments.length();
