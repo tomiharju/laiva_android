@@ -31,8 +31,7 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 
     public SocketHandler socketHandler;
     public NativeActionsImpl nativeActions;
-    public ProgressDialog progress;
-    
+
     private TextView status;
     private Handler handler;
 
@@ -46,12 +45,12 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
         // Create nativeActions for creating progress dialogs
         nativeActions = new NativeActionsImpl(this);
         
-        /*nativeActions.createProgressDialog("Connecting", "Connecting, please wait", true, new CancelListener() {
+        nativeActions.createProgressDialog("Connecting", "Connecting, please wait", true, new CancelListener() {
 			@Override
 			public void cancel() {
 				// Cancel
 			}      	
-        });*/
+        });
     
         bindService(new Intent(this, SocketService.class), serviceConnection, BIND_AUTO_CREATE);
         
@@ -159,7 +158,6 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 		public void onServiceConnected(ComponentName arg0, IBinder binder) {
 			socketHandler = ((SocketHandler) binder);
 			socketHandler.setConnectivityListener(LobbyActivity.this);
-			//socketHandler.connect();
 		}
 
 		@Override
@@ -183,7 +181,7 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 	public void onError() {
 		nativeActions.createConfirmDialog(
 				"Disconnected", 
-				"Conenection to server was lost", 
+				"Connection to server was lost",
 				"Attempt reconnect", 
 				"Exit", 
 				new ConfirmListener() {

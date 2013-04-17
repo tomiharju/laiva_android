@@ -17,7 +17,7 @@ import com.sohvastudios.battleships.game.gamelogic.GameLogicHandler;
 import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
 
 
-public class SocketListener implements EventCallback, CompletedCallback {
+public class SocketListener implements EventCallback {
 	
 	private NativeActionsImpl nativeActions;
 	private GameLogicHandler logicHandler;
@@ -34,29 +34,19 @@ public class SocketListener implements EventCallback, CompletedCallback {
 	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
 		this.connectivityListener = lobbyHandler;
 	}
-	
-	@Override
-	public void onCompleted(Exception ex) {
-		if(ex != null) {
-			connectivityListener.onError();
-			return;
-		}
-		Log.d("battleships", "Disconnected gracefully");
-		//connectivityListener.onError();
-	}
 
 	@Override
 	public void onEvent(String event, JSONArray arguments) {
-		if(event.equals("start")) {
+		if("start".equals(event)) {
 			Log.d("battleships", "received start");
 			logicHandler.receiveStart();
 			
-		} else if(event.equals("wait")) {
+		} else if("wait".equals(event)) {
 			Log.d("battleships", "received wait");
 			nativeActions.dismissProgressDialog();
 			logicHandler.receiveWait();
 			
-		} else if(event.equals("shoot")) {
+		} else if("shoot".equals(event)) {
 			Log.d("battleships", "received shoot");
 			
 			float x, y;
@@ -75,19 +65,14 @@ public class SocketListener implements EventCallback, CompletedCallback {
 				e.printStackTrace();
 			}
 			
-		} else if(event.equals("result")) {
+		} else if("result".equals(event)) {
 			// Result after shoot
 			
 			HashMap<ArrayList<Vector3>, ArrayList<Vector3>> result = new HashMap<ArrayList<Vector3>, ArrayList<Vector3>>();
 
 			try {
-				arguments = arguments.getJSONArray(0);
-
 
 				int len = arguments.length();
-				JSONArray subArray;
-						
-				Log.d("battleships", "Receiving result with " + len + " hits.");
 
 				for(int j = 0; j < len; j++) {
 					if(arguments.get(j) == null) {
@@ -98,8 +83,8 @@ public class SocketListener implements EventCallback, CompletedCallback {
 
                     JSONArray hits = shot.getJSONArray("hits");
                     ArrayList<Vector3> hitList = new ArrayList<Vector3>();
-                    for(int i1=0; i1<hits.length(); i1++) {
-                        JSONObject hit = hits.getJSONObject(i1);
+                    for(int i=0; i<hits.length(); i++) {
+                        JSONObject hit = hits.getJSONObject(i);
                         hitList.add(
                                 new Vector3(
                                         (float) hit.getDouble("x"),
@@ -109,16 +94,15 @@ public class SocketListener implements EventCallback, CompletedCallback {
 
                     JSONArray paths = shot.getJSONArray("path");
                     ArrayList<Vector3> pathList = new ArrayList<Vector3>();
-                    for(int i1=0; i1<paths.length(); i1++) {
-                        JSONObject path = paths.getJSONObject(i1);
+                    for(int i=0; i<paths.length(); i++) {
+                        JSONObject path = paths.getJSONObject(i);
                         pathList.add(
                                 new Vector3(
                                         (float) path.getDouble("x"),
                                         (float) path.getDouble("y"),
                                         0));
                     }
-					
-					//Log.d("battleships", vector.toString());
+
 					result.put(pathList, hitList);
 				}
 			} catch (JSONException e) {
@@ -126,13 +110,13 @@ public class SocketListener implements EventCallback, CompletedCallback {
 				e.printStackTrace();
 			}
 
-		//	logicHandler.receiveResult(result);
-		} else if(event.equals("launch")) {
+			logicHandler.receiveResult(result);
+		} else if("launch".equals(event)) {
 			// Launch game
 			Log.d("battleships", "Launching");
 			nativeActions.dismissProgressDialog();
 			nativeActions.launchGameIntent();
-		} else if(event.equals("playerLeft")) {
+		} else if("playerLeft".equals(event)) {
 			Log.d("battleships", "Opponent left");
 			
 			logicHandler.opponentLeft();

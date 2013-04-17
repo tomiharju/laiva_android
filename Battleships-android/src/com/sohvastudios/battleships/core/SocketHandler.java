@@ -1,6 +1,5 @@
 package com.sohvastudios.battleships.core;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +12,6 @@ import org.json.JSONObject;
 import android.os.Binder;
 import android.util.Log;
 
-import com.badlogic.gdx.math.Vector2;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.SocketIOClient;
 import com.koushikdutta.async.http.SocketIOClient.SocketIOConnectCallback;
@@ -26,45 +24,44 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	
 	private SocketIOClient client;
 	private final SocketListener socketListener;
+
+    // Listener to notify ongoing activity of connectivity changes
 	private ConnectivityListener connectivityListener;
 	
 	public SocketHandler(SocketListener socketListener) {
 		Log.d("battleships", "SocketHandler created");
 		this.socketListener = socketListener;
-		
-		SocketIOClient.connect(
-				AsyncHttpClient.getDefaultInstance(),
-				"http://198.211.119.249:8081", 
-				new SocketIOConnectCallback() {		
-					@Override
-					public void onConnectCompleted(Exception ex, SocketIOClient client) {
-						//connectivityListener.onConnect();
-						
-						SocketHandler.this.client = client;
-						
-						client.setEventCallback(SocketHandler.this.socketListener);
-						client.setClosedCallback(new CompletedCallback() {
-							
-							@Override
-							public void onCompleted(Exception ex) {
-								if(ex != null) {
-                                    Log.e("battleships", "Socket error", ex);
-									connectivityListener.onError();
-									return;
-								}
-								Log.d("battleships", "Disconnected gracefully");
-								//connectivityListener.onError();								
-							}
-						});
-						
-						//client.disconnect();
-					}
-				});
 	}
 	
 	@Override
 	public void connect() {
-		
+		SocketIOClient.connect(
+				AsyncHttpClient.getDefaultInstance(),
+				"http://198.211.119.249:8081",
+				new SocketIOConnectCallback() {
+					@Override
+					public void onConnectCompleted(Exception ex, SocketIOClient client) {
+						connectivityListener.onConnect();
+
+						SocketHandler.this.client = client;
+
+						client.setEventCallback(SocketHandler.this.socketListener);
+						client.setClosedCallback(new CompletedCallback() {
+
+							@Override
+							public void onCompleted(Exception ex) {
+								if(ex != null) {
+									Log.e("battleships", "SocketIO error", ex);
+									connectivityListener.onError();
+									return;
+								}
+								Log.d("battleships", "Disconnected properly");
+
+								//connectivityListener.onDisconnect();
+							}
+						});
+					}
+				});
 	}
 	
 	@Override
@@ -94,25 +91,19 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	
 	@Override
 	public void matchMake() {
-		try {
-			client.emit("matchmake", null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		client.emit("matchmake", null);
 	}
 	
 	@Override
 	public void join(CharSequence room) {
-		JSONObject json = new JSONObject();
-		
 		try {
-			client.emit("matchMake", null);
-			
-			json.put("room", room);
+			// what? why is this here?
+			//client.emit("matchMake", null);
 
-			client.emit("join", new JSONArray().put(json));
-		} catch (Exception e) {
+			JSONObject jsonObj = new JSONObject().put("room", room);
+
+			client.emit("join", new JSONArray().put(jsonObj));
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -120,38 +111,24 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	
 	@Override
 	public void leave() {
-		try {
-			client.emit("leave", null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		client.emit("leave", null);
 	}
 
 	@Override
 	public void sendReady() {
-		Log.d("battleships", "emitting ready");
-		try {
-			client.emit("ready", null);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		client.emit("ready", null);
 	}
 
 	@Override
 	public void sendShoot(float x, float y, int weapon) {
-		Log.d("battleships", "emitting turn");
-
-		JSONArray jsonArray = new JSONArray();
 		JSONObject json = new JSONObject();
 		
 		try {
 			json.put("x", x);
 			json.put("y", y);
 			json.put("weapon", weapon);
-			
-			jsonArray.put(json);
-			client.emit("shoot", jsonArray);
+
+			client.emit("shoot", new JSONArray().put(json));
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -190,9 +167,14 @@ public class SocketHandler extends Binder implements ConnectionHandler {
                 jsonShot.put("hits", hitList);
                 jsonShot.put("path", pathList);
 
-				array.put(jsonShot);
+				array.put(
+                        new JSONObject()
+                                .put("hits", hitList)
+                                .put("path", pathList));
 			}
+
 			client.emit("result", array);
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
