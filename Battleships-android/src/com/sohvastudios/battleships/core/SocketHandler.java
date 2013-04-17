@@ -2,6 +2,7 @@ package com.sohvastudios.battleships.core;
 
 import java.util.ArrayList;
 
+import com.koushikdutta.async.callback.CompletedCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,23 +36,24 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 					public void onConnectCompleted(Exception ex, SocketIOClient client) {
 						//connectivityListener.onConnect();
 						
-						//SocketHandler.this.client = client;
+						SocketHandler.this.client = client;
 						
-						//client.setEventCallback(SocketHandler.this.socketListener);
-						/*client.setClosedCallback(new CompletedCallback() {
+						client.setEventCallback(SocketHandler.this.socketListener);
+						client.setClosedCallback(new CompletedCallback() {
 							
 							@Override
 							public void onCompleted(Exception ex) {
 								if(ex != null) {
+                                    Log.e("battleships", "Socket error", ex);
 									connectivityListener.onError();
 									return;
 								}
 								Log.d("battleships", "Disconnected gracefully");
 								//connectivityListener.onError();								
 							}
-						});*/
+						});
 						
-						client.disconnect();
+						//client.disconnect();
 					}
 				});
 	}
@@ -76,12 +78,14 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	public void disconnect() {
 		Log.d("battleships", "Disconnecting");
 		try {
-			client.disconnect();
-			//client.emit("askDisconnect", null);
+			//client.disconnect();
+			client.emit("askDisconnect", null);
 		} catch (Exception e) {
 			Log.d("battleships", "Error disconnecting.");
 			e.printStackTrace();
-		}
+		} finally {
+            client = null;
+        }
 	}
 
 	
@@ -89,7 +93,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	public void matchMake() {
 		try {
 			client.emit("matchmake", null);
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -105,7 +109,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 			json.put("room", room);
 
 			client.emit("join", new JSONArray().put(json));
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -115,7 +119,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	public void leave() {
 		try {
 			client.emit("leave", null);
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -126,7 +130,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 		Log.d("battleships", "emitting ready");
 		try {
 			client.emit("ready", null);
-		} catch (JSONException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}
