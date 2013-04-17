@@ -40,7 +40,6 @@ public class GameActivity extends AndroidApplication {
         cfg.useCompass =false;
         cfg.useAccelerometer = false;
         cfg.useWakelock=true;
-        
         game = new Main(nativeActions);
      
         initialize(game, cfg);
