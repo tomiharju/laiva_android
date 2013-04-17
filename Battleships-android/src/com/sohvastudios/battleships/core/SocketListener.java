@@ -89,12 +89,12 @@ public class SocketListener implements EventCallback, CompletedCallback {
 						
 				Log.d("battleships", "Receiving result with " + len + " hits.");
 
-				for(int i = 0; i < len; i++) {
-					if(arguments.get(i) == null) {
+				for(int j = 0; j < len; j++) {
+					if(arguments.get(j) == null) {
 						Log.d("battleships", "index is null. breaking");
 						break;
 					}
-					JSONObject shot = arguments.getJSONObject(i);
+					JSONObject shot = arguments.getJSONObject(j);
 
                     JSONArray hits = shot.getJSONArray("hits");
                     ArrayList<Vector3> hitList = new ArrayList<Vector3>();
@@ -118,7 +118,7 @@ public class SocketListener implements EventCallback, CompletedCallback {
                                         0));
                     }
 					
-					Log.d("battleships", vector.toString());
+					//Log.d("battleships", vector.toString());
 					result.put(pathList, hitList);
 				}
 			} catch (JSONException e) {
