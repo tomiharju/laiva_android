@@ -98,8 +98,8 @@ public class SocketListener implements EventCallback, CompletedCallback {
 
                     JSONArray hits = shot.getJSONArray("hits");
                     ArrayList<Vector3> hitList = new ArrayList<Vector3>();
-                    for(int i=0; i<hits.length(); i++) {
-                        JSONObject hit = hits.getJSONObject(i);
+                    for(int i1=0; i1<hits.length(); i1++) {
+                        JSONObject hit = hits.getJSONObject(i1);
                         hitList.add(
                                 new Vector3(
                                         (float) hit.getDouble("x"),
@@ -109,8 +109,8 @@ public class SocketListener implements EventCallback, CompletedCallback {
 
                     JSONArray paths = shot.getJSONArray("path");
                     ArrayList<Vector3> pathList = new ArrayList<Vector3>();
-                    for(int i=0; i<paths.length(); i++) {
-                        JSONObject path = paths.getJSONObject(i);
+                    for(int i1=0; i1<paths.length(); i1++) {
+                        JSONObject path = paths.getJSONObject(i1);
                         pathList.add(
                                 new Vector3(
                                         (float) path.getDouble("x"),
@@ -126,11 +126,10 @@ public class SocketListener implements EventCallback, CompletedCallback {
 				e.printStackTrace();
 			}
 
-			logicHandler.receiveResult(result);
+		//	logicHandler.receiveResult(result);
 		} else if(event.equals("launch")) {
 			// Launch game
 			Log.d("battleships", "Launching");
-			
 			nativeActions.dismissProgressDialog();
 			nativeActions.launchGameIntent();
 		} else if(event.equals("playerLeft")) {
