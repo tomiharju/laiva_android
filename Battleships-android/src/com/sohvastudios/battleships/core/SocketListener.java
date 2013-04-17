@@ -1,7 +1,9 @@
 package com.sohvastudios.battleships.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.badlogic.gdx.math.Vector3;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,30 +86,48 @@ public class SocketListener implements SocketIOClient.Handler {
 		} else if(event.equals("result")) {
 			// Result after shoot
 			
-			ArrayList<Vector2> result = new ArrayList<Vector2>();
+			HashMap<ArrayList<Vector3>, ArrayList<Vector3>> result = new HashMap<ArrayList<Vector3>, ArrayList<Vector3>>();
 
 			try {
 				arguments = arguments.getJSONArray(0);
+
 
 				int len = arguments.length();
 				JSONArray subArray;
 						
 				Log.d("battleships", "Receiving result with " + len + " hits.");
 
-				
 				for(int i = 0; i < len; i++) {
 					if(arguments.get(i) == null) {
 						Log.d("battleships", "index is null. breaking");
 						break;
 					}
+					JSONObject shot = arguments.getJSONObject(i);
+
+                    JSONArray hits = shot.getJSONArray("hits");
+                    ArrayList<Vector3> hitList = new ArrayList<Vector3>();
+                    for(int i1=0; i1<hits.length(); i1++) {
+                        JSONObject hit = hits.getJSONObject(i1);
+                        hitList.add(
+                                new Vector3(
+                                        (float) hit.getDouble("x"),
+                                        (float) hit.getDouble("y"),
+                                        0));
+                    }
+
+                    JSONArray paths = shot.getJSONArray("path");
+                    ArrayList<Vector3> pathList = new ArrayList<Vector3>();
+                    for(int i1=0; i1<paths.length(); i1++) {
+                        JSONObject path = paths.getJSONObject(i1);
+                        pathList.add(
+                                new Vector3(
+                                        (float) path.getDouble("x"),
+                                        (float) path.getDouble("y"),
+                                        0));
+                    }
 					
-					subArray = arguments.getJSONArray(i);
-					Vector2 vector = new Vector2();
-					vector.x = (float) subArray.getDouble(0);
-					vector.y = (float) subArray.getDouble(1);
-					
-					Log.d("battleships", vector.toString());
-					result.add(vector);
+					//Log.d("battleships", vector.toString());
+					result.put(pathList, hitList);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -118,7 +138,6 @@ public class SocketListener implements SocketIOClient.Handler {
 		} else if(event.equals("launch")) {
 			// Launch game
 			Log.d("battleships", "Launching");
-			
 			nativeActions.dismissProgressDialog();
 			nativeActions.launchGameIntent();
 		} else if(event.equals("playerLeft")) {
