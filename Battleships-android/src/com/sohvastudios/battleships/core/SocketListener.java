@@ -126,9 +126,11 @@ public class SocketListener implements SocketIOClient.Handler {
                                         0));
                     }
 					
-					//Log.d("battleships", vector.toString());
+					Log.d("battleships", hitList.toString());
 					result.put(pathList, hitList);
 				}
+
+                logicHandler.receiveResult(result);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
