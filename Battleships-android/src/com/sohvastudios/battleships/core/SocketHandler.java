@@ -159,7 +159,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 
 				array.put(jsonShot);
 			}
-			client.emit("result", new JSONArray().put(array));
+			client.emit("result", array);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
