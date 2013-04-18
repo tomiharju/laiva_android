@@ -92,7 +92,6 @@ public class SocketListener implements SocketIOClient.Handler {
 				arguments = arguments.getJSONArray(0);
 
 				int len = arguments.length();
-				JSONArray subArray;
 
 				Log.d("battleships", "Receiving result with " + len + " hits.");
 
@@ -103,39 +102,38 @@ public class SocketListener implements SocketIOClient.Handler {
 					}
 					JSONObject shot = arguments.getJSONObject(j);
 
+					JSONArray path = shot.getJSONArray("path");
+					ArrayList<Vector3> pathList = new ArrayList<Vector3>();
+					for(int i=0; i<path.length(); i++) {
+						JSONObject pathPoint = path.getJSONObject(i);
+						pathList.add(
+								new Vector3(
+										(float) pathPoint.getDouble("x"),
+										(float) pathPoint.getDouble("y"),
+										0));
+					}
+
 					JSONArray hits = shot.getJSONArray("hits");
 					ArrayList<Vector3> hitList = new ArrayList<Vector3>();
 					for(int i=0; i<hits.length(); i++) {
-						JSONObject hit = hits.getJSONObject(i);
+						JSONObject hitPoint = hits.getJSONObject(i);
 						hitList.add(
 								new Vector3(
-										(float) hit.getDouble("x"),
-										(float) hit.getDouble("y"),
-										0));
+										(float) hitPoint.getDouble("x"),
+										(float) hitPoint.getDouble("y"),
+										(float) hitPoint.getDouble("z")));
 					}
 
-					JSONArray paths = shot.getJSONArray("path");
-					ArrayList<Vector3> pathList = new ArrayList<Vector3>();
-					for(int i=0; i<paths.length(); i++) {
-						JSONObject path = paths.getJSONObject(i);
-						pathList.add(
-								new Vector3(
-										(float) path.getDouble("x"),
-										(float) path.getDouble("y"),
-										0));
-					}
-
-					Log.d("battleships", hitList.toString());
 					result.put(pathList, hitList);
 				}
+
+				Log.d("battleships", result.toString());
 
 				logicHandler.receiveResult(result);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-		//	logicHandler.receiveResult(result);
 		} else if(event.equals("launch")) {
 			// Launch game
 			Log.d("battleships", "Launching");
