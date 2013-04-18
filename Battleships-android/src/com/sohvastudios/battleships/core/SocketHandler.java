@@ -159,14 +159,9 @@ public class SocketHandler extends Binder implements ConnectionHandler {
                     hitList.put(
                             new JSONObject()
                                     .put("x", hits.get(i).x)
-                                    .put("y", hits.get(i).y));
+                                    .put("y", hits.get(i).y)
+		                            .put("z", hits.get(i).y));
                 }
-
-
-
-                JSONObject jsonShot = new JSONObject();
-                jsonShot.put("hits", hitList);
-                jsonShot.put("path", pathList);
 
 				array.put(
                         new JSONObject()

@@ -84,27 +84,27 @@ public class SocketListener implements EventCallback {
 					}
 					JSONObject shot = arguments.getJSONObject(j);
 
-                    JSONArray hits = shot.getJSONArray("hits");
-                    ArrayList<Vector3> hitList = new ArrayList<Vector3>();
-                    for(int i=0; i<hits.length(); i++) {
-                        JSONObject hit = hits.getJSONObject(i);
-                        hitList.add(
+                    JSONArray path = shot.getJSONArray("path");
+                    ArrayList<Vector3> pathList = new ArrayList<Vector3>();
+                    for(int i=0; i<path.length(); i++) {
+                        JSONObject pathPoint = path.getJSONObject(i);
+                        pathList.add(
                                 new Vector3(
-                                        (float) hit.getDouble("x"),
-                                        (float) hit.getDouble("y"),
+                                        (float) pathPoint.getDouble("x"),
+                                        (float) pathPoint.getDouble("y"),
                                         0));
                     }
 
-                    JSONArray paths = shot.getJSONArray("path");
-                    ArrayList<Vector3> pathList = new ArrayList<Vector3>();
-                    for(int i=0; i<paths.length(); i++) {
-                        JSONObject path = paths.getJSONObject(i);
-                        pathList.add(
-                                new Vector3(
-                                        (float) path.getDouble("x"),
-                                        (float) path.getDouble("y"),
-                                        0));
-                    }
+					JSONArray hits = shot.getJSONArray("hits");
+					ArrayList<Vector3> hitList = new ArrayList<Vector3>();
+					for(int i=0; i<hits.length(); i++) {
+						JSONObject hitPoint = hits.getJSONObject(i);
+						hitList.add(
+								new Vector3(
+										(float) hitPoint.getDouble("x"),
+										(float) hitPoint.getDouble("y"),
+										(float) hitPoint.getDouble("z")));
+					}
 
 					result.put(pathList, hitList);
 				}
@@ -112,6 +112,8 @@ public class SocketListener implements EventCallback {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+			Log.d("battleships", result.toString());
 
 			logicHandler.receiveResult(result);
 		} else if("launch".equals(event)) {
