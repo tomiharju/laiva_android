@@ -42,7 +42,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 					@Override
 					public void onConnectCompleted(Exception ex, SocketIOClient client) {
 						Log.d("battleships", "ConnectCompleted");
-						//connectivityListener.onConnect();
+						connectivityListener.onConnect();
 
 						SocketHandler.this.client = client;
 
@@ -72,6 +72,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 	}
 	
 	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
+		this.connectivityListener = lobbyHandler;
 		socketListener.setConnectivityListener(lobbyHandler);
 	}
 
