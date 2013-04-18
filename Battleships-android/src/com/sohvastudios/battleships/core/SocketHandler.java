@@ -19,26 +19,26 @@ import com.sohvastudios.battleships.game.interfaces.ConnectivityListener;
 
 
 public class SocketHandler extends Binder implements ConnectionHandler {
-	
+
 	private SocketIOClient client;
 	private final SocketListener socketListener;
-	
+
 	public SocketHandler(SocketListener socketListener) {
 		this.socketListener = socketListener;
 	}
-	
+
 	@Override
 	public void connect() {
 		client = new SocketIOClient(URI.create("http://198.211.119.249:8081"), socketListener);
 		client.connect();
 	}
-	
+
 	@Override
 	public void setLogicHandler(GameLogicHandler logicHandler) {
 		Log.d("battleships", "Setting GameLogicHandler");
 		socketListener.setGameLogicHandler(logicHandler);
 	}
-	
+
 	public void setConnectivityListener(ConnectivityListener lobbyHandler) {
 		socketListener.setConnectivityListener(lobbyHandler);
 	}
@@ -58,7 +58,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 		}
 	}
 
-	
+
 	@Override
 	public void matchMake() {
 		try {
@@ -68,14 +68,14 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void join(CharSequence room) {
 		JSONObject json = new JSONObject();
-		
+
 		try {
 			client.emit("matchMake", null);
-			
+
 			json.put("room", room);
 
 			client.emit("join", new JSONArray().put(json));
@@ -84,7 +84,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void leave() {
 		try {
@@ -111,55 +111,51 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 
 		JSONArray jsonArray = new JSONArray();
 		JSONObject json = new JSONObject();
-		
+
 		try {
 			json.put("x", x);
 			json.put("y", y);
 			json.put("weapon", weapon);
-			
+
 			jsonArray.put(json);
 			client.emit("shoot", jsonArray);
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-
 	public void sendResult(HashMap<ArrayList<Vector3>,ArrayList<Vector3>> result) {
 		try {
 			JSONArray array = new JSONArray();
 
 			for(Map.Entry<ArrayList<Vector3>, ArrayList<Vector3>> shot : result.entrySet()) {
 
-                ArrayList<Vector3> path = shot.getKey();
-                JSONArray pathList = new JSONArray();
-                for(int i=0; i<path.size(); i++) {
-                    pathList.put(
-                            new JSONObject()
-                                    .put("x", path.get(i).x)
-                                    .put("y", path.get(i).y));
-                }
+				ArrayList<Vector3> path = shot.getKey();
+				JSONArray pathList = new JSONArray();
+				for(int i=0; i<path.size(); i++) {
+					pathList.put(
+							new JSONObject()
+									.put("x", path.get(i).x)
+									.put("y", path.get(i).y));
+				}
 
-                ArrayList<Vector3> hits = shot.getValue();
-                JSONArray hitList = new JSONArray();
-                for(int i=0; i<hits.size(); i++) {
-                    hitList.put(
-                            new JSONObject()
-                                    .put("x", hits.get(i).x)
-                                    .put("y", hits.get(i).y));
-                }
+				ArrayList<Vector3> hits = shot.getValue();
+				JSONArray hitList = new JSONArray();
+				for(int i=0; i<hits.size(); i++) {
+					hitList.put(
+							new JSONObject()
+									.put("x", hits.get(i).x)
+									.put("y", hits.get(i).y));
+				}
 
-
-
-                JSONObject jsonShot = new JSONObject();
-                jsonShot.put("hits", hitList);
-                jsonShot.put("path", pathList);
-
-				array.put(jsonShot);
+				array.put(
+						new JSONObject()
+								.put("hits", hitList)
+								.put("path", pathList));
 			}
-			client.emit("result", array);
+			client.emit("result", new JSONArray().put(array));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
