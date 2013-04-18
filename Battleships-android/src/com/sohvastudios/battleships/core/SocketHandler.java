@@ -41,7 +41,8 @@ public class SocketHandler extends Binder implements ConnectionHandler {
 				new SocketIOConnectCallback() {
 					@Override
 					public void onConnectCompleted(Exception ex, SocketIOClient client) {
-						connectivityListener.onConnect();
+						Log.d("battleships", "ConnectCompleted");
+						//connectivityListener.onConnect();
 
 						SocketHandler.this.client = client;
 
@@ -173,7 +174,7 @@ public class SocketHandler extends Binder implements ConnectionHandler {
                                 .put("path", pathList));
 			}
 
-			client.emit("result", array);
+			client.emit("result", new JSONArray().put(array));
 
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -71,6 +71,9 @@ public class SocketListener implements EventCallback {
 			HashMap<ArrayList<Vector3>, ArrayList<Vector3>> result = new HashMap<ArrayList<Vector3>, ArrayList<Vector3>>();
 
 			try {
+				arguments = arguments.getJSONArray(0);
+
+				Log.d("battleships", arguments.toString(4));
 
 				int len = arguments.length();
 

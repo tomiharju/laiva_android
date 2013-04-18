@@ -158,6 +158,7 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 		public void onServiceConnected(ComponentName arg0, IBinder binder) {
 			socketHandler = ((SocketHandler) binder);
 			socketHandler.setConnectivityListener(LobbyActivity.this);
+			socketHandler.connect();
 		}
 
 		@Override
@@ -168,6 +169,7 @@ public class LobbyActivity extends Activity implements ConnectivityListener {
 
 	@Override
 	public void onConnect() {
+		Log.d("battleships", "Lobby onconnect");
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
